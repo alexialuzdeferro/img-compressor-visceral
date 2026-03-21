@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alquimia de Imagens | Portal Visceral</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --dark-abyss: #0a0a0a;
+            --blood: #8b0000;
+            --metal: #2c2c2c;
+            --ghost-white: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--dark-abyss);
+            color: var(--ghost-white);
+            font-family: 'Courier New', Courier, monospace; /* Estética industrial/podcast */
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--blood);
+            width: 100%;
+        }
+
+        header h1 {
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 4px rgba(139, 0, 0, 0.6);
+            margin: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            margin-top: 20px;
+        }
+
+        /* Accordion Estilo Visceral */
+        .accordion {
+            background-color: var(--metal);
+            color: var(--ghost-white);
+            cursor: pointer;
+            padding: 20px;
+            width: 100%;
+            border: 1px solid #444;
+            text-align: left;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            transition: 0.3s;
+        }
+
+        .accordion.active {
+            border-left: 5px solid var(--blood);
+            background-color: #1a1a1a;
+        }
+
+        .panel {
+            padding: 0 15px;
+            background-color: #111;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            border: 1px solid #222;
+            margin-bottom: 10px;
+        }
+
+        /* Área de Upload */
+        .drop-zone {
+            height: 150px;
+            border: 1px dashed var(--blood);
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        /* Preview com Overlay */
+        .image-preview-container {
+            position: relative;
+            margin: 20px 0;
+            border: 1px solid var(--blood);
+            display: none;
+        }
+
+        #previewImg { width: 100%; display: block; filter: grayscale(30%); }
+
+        .overlay-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            text-align: center;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-shadow: 0px 0px 15px black;
+            font-family: 'Georgia', serif; /* Contraste elegante */
+        }
+
+        input[type="text"] {
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--blood);
+            color: white;
+            padding: 15px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 25px;
+            background-color: var(--blood);
+            color: white;
+            border: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+
+        .btn-action:active { background-color: #600000; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>ALQUIMIA</h1>
+    <small style="color: var(--blood)">ANATOMIA DA IMAGEM</small>
+</header>
+
+<div class="container">
+    <button class="accordion" onclick="hapticPulse()"><span>01</span> MATÉRIA-PRIMA <span>+</span></button>
+    <div class="panel">
+        <div class="drop-zone" onclick="document.getElementById('fileIn').click()">
+            [ CLIQUE PARA TRANSMUTAR ]
+            <input type="file" id="fileIn" hidden accept="image/*">
+        </div>
+    </div>
+
+    <button class="accordion" onclick="hapticPulse()"><span>02</span> SOPRO VITAL (MENSAGEM) <span>+</span></button>
+    <div class="panel">
+        <p style="font-size: 0.7rem; color: #666;">INSIRA A MENSAGEM QUE HABITARÁ A IMAGEM:</p>
+        <input type="text" id="msgInput" placeholder="Ex: O abismo também olha..." oninput="updateLabel()">
+        <div class="image-preview-container" id="previewContainer">
+            <img id="previewImg" src="">
+            <div class="overlay-text" id="labelOutput"></div>
+        </div>
+    </div>
+
+    <button class="accordion" onclick="hapticPulse()"><span>03</span> RITUAL DE FINALIZAÇÃO <span>+</span></button>
+    <div class="panel">
+        <button class="btn-action" onclick="finishRitual()">COMPRIMIR E SALVAR</button>
+    </div>
+</div>
+
+<script>
+    // Inicializar Supabase com suas chaves
+    const _supabase = supabase.createClient('https://rbygxkbewzknvjjhxdvw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJieWd4a2Jld3prbnZqamh4ZHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMDcxNjQsImV4cCI6MjA4MTU4MzE2NH0.YrHF9HEGo6yv9MyNsPzFgBhaAB1DRh2SLU8f7L6s1nY');
+
+    // Accordion Logic
+    var acc = document.getElementsByClassName("accordion");
+    for (let i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            panel.style.maxHeight = panel.style.maxHeight ? null : panel.scrollHeight + "px";
+        });
+    }
+
+    function hapticPulse() {
+        if (navigator.vibrate) navigator.vibrate([30, 10, 30]); // Vibração tipo pulsação
+    }
+
+    // Preview Logic
+    const fileIn = document.getElementById('fileIn');
+    fileIn.onchange = e => {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('previewImg').src = URL.createObjectURL(file);
+            document.getElementById('previewContainer').style.display = 'block';
+            hapticPulse();
+        }
+    }
+
+    function updateLabel() {
+        document.getElementById('labelOutput').innerText = document.getElementById('msgInput').value;
+    }
+
+    async function finishRitual() {
+        hapticPulse();
+        alert("Iniciando transmutação... (Aqui entra a lógica de upload que configuramos)");
+        // A lógica de upload usaria o _supabase.storage e _supabase.from('historico_visceral')
+    }
+</script>
+
+</body>
+</html>
