@@ -8,21 +8,35 @@
     <meta name="theme-color" content="#030303">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --dark: #030303; --blood: #8b0000; --ghost: #d0d0d0; }
-        body { background: var(--dark); color: var(--ghost); font-family: 'Courier New', monospace; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        header { padding: 30px; text-align: center; border-bottom: 1px solid var(--blood); width: 100%; letter-spacing: 5px; }
-        .container { width: 95%; max-width: 500px; margin: 20px auto; }
-        .accordion { background: #1a1a1a; color: var(--ghost); cursor: pointer; padding: 20px; width: 100%; border: 1px solid #333; text-align: left; font-weight: bold; margin-bottom: 8px; display: flex; justify-content: space-between; text-transform: uppercase; }
-        .active { border-left: 6px solid var(--blood); background: #0a0a0a; }
-        .panel { padding: 0 15px; background: #050505; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; border: 1px solid #111; margin-bottom: 10px; }
-        .drop-zone { height: 100px; border: 1px dashed var(--blood); margin: 15px 0; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #666; font-size: 0.8rem; text-align: center; }
-        input[type="text"] { width: 100%; background: #000; border: 1px solid var(--blood); color: #fff; padding: 15px; box-sizing: border-box; margin: 10px 0; }
-        #previewContainer { position: relative; margin: 15px 0; display: none; border: 1px solid var(--blood); width: 100%; }
-        #previewImg { width: 100%; height: auto; display: block; }
-        .overlay-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; text-align: center; color: white; font-size: 1.5rem; font-weight: bold; text-shadow: 2px 2px 10px #000; font-family: 'Georgia', serif; pointer-events: none; word-wrap: break-word; }
-        .btn-ritual { width: 100%; padding: 22px; background: var(--blood); color: #fff; border: none; font-weight: bold; text-transform: uppercase; cursor: pointer; margin: 10px 0; letter-spacing: 1px; }
-        #downloadBtn { display: none; background: #222; border: 1px solid var(--ghost); }
-        #status { font-size: 0.75rem; text-align: center; margin: 10px 0; color: #888; line-height: 1.4; }
+        :root { --dark: #030303; --blood: #8b0000; --metal: #1a1a1a; --ghost: #d0d0d0; }
+        body { background-color: var(--dark); color: var(--ghost); font-family: 'Courier New', monospace; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { padding: 20px; text-align: center; border-bottom: 1px solid var(--blood); width: 100%; letter-spacing: 5px; }
+        .container { width: 95%; max-width: 500px; margin: 10px auto; }
+        .accordion { background-color: var(--metal); color: var(--ghost); cursor: pointer; padding: 15px; width: 100%; border: 1px solid #333; text-align: left; font-weight: bold; text-transform: uppercase; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .active { border-left: 6px solid var(--blood); background-color: #0a0a0a; }
+        .panel { padding: 0 15px; background-color: #050505; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; border: 1px solid #111; margin-bottom: 10px; }
+        .drop-zone { height: 80px; border: 1px dashed var(--blood); margin: 10px 0; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #666; font-size: 0.8rem; text-align: center; }
+        input[type="text"] { width: 100%; background: #000; border: 1px solid var(--blood); color: #fff; padding: 12px; box-sizing: border-box; margin: 10px 0; font-size: 1rem; }
+        #previewContainer { position: relative; margin: 10px 0; display: none; border: 1px solid var(--blood); }
+        #previewImg { width: 100%; display: block; }
+        .overlay-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; text-align: center; color: white; font-size: 1.2rem; font-weight: bold; text-shadow: 2px 2px 10px #000; font-family: 'Georgia', serif; pointer-events: none; }
+        .btn-ritual { width: 100%; padding: 18px; background-color: var(--blood); color: #fff; border: none; font-weight: bold; text-transform: uppercase; cursor: pointer; margin: 10px 0; }
+        
+        /* BOTÃO DE DOWNLOAD COM ESTILO NEON */
+        #downloadBtn { 
+            display: none; 
+            background-color: transparent; 
+            border: 2px solid #00ff00; 
+            color: #00ff00; 
+            margin: 20px 0; 
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+            padding: 20px;
+            font-size: 1.1rem;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
+
+        #status { font-size: 0.8rem; text-align: center; margin: 10px 0; color: #888; }
     </style>
 </head>
 <body>
@@ -30,38 +44,39 @@
 <header><h1>ALQUIMIA</h1></header>
 
 <div class="container">
-    <button class="accordion">01 Matéria-Prima <span>+</span></button>
+    <button class="accordion"><span>01</span> Matéria-Prima <span>+</span></button>
     <div class="panel">
-        <div class="drop-zone" onclick="document.getElementById('fileIn').click()">[ TOQUE PARA SELECIONAR IMAGEM ]</div>
+        <div class="drop-zone" onclick="document.getElementById('fileIn').click()">[ TOQUE PARA SELECIONAR ]</div>
         <input type="file" id="fileIn" hidden accept="image/*">
     </div>
 
-    <button class="accordion">02 Sopro Vital <span>+</span></button>
+    <button class="accordion"><span>02</span> Sopro Vital <span>+</span></button>
     <div class="panel">
-        <input type="text" id="msgInput" placeholder="A frase que habita o abismo..." oninput="updatePreviewText()">
+        <input type="text" id="msgInput" placeholder="Sua frase aqui..." oninput="document.getElementById('overlay').innerText = this.value">
         <div id="previewContainer">
             <img id="previewImg" src="">
             <div class="overlay-text" id="overlay"></div>
         </div>
     </div>
 
-    <button class="accordion">03 Ritual Final <span>+</span></button>
-    <div class="panel">
+    <button class="accordion"><span>03</span> Ritual Final <span>+</span></button>
+    <div class="panel" id="finalPanel">
         <button class="btn-ritual" onclick="executeRitual()">Comprimir e Gravar Frase</button>
-        <div id="status">Aguardando transmutação...</div>
-        <button class="btn-ritual" id="downloadBtn">Baixar Imagem Pronta</button>
+        <div id="status">Aguardando...</div>
+        <!-- Botão agora está bem aqui -->
+        <button class="btn-ritual" id="downloadBtn">BAIXAR IMAGEM PRONTA</button>
+        <div style="height: 20px;"></div> <!-- Espaço extra no final -->
     </div>
 </div>
 
 <script>
-    // Configuração Supabase
     const _supabase = supabase.createClient('https://rbygxkbewzknvjjhxdvw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJieWd4a2Jld3prbnZqamh4ZHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMDcxNjQsImV4cCI6MjA4MTU4MzE2NH0.YrHF9HEGo6yv9MyNsPzFgBhaAB1DRh2SLU8f7L6s1nY');
 
-    document.querySelectorAll('.accordion').forEach(button => {
-        button.onclick = () => {
-            button.classList.toggle('active');
-            let panel = button.nextElementSibling;
-            panel.style.maxHeight = panel.style.maxHeight ? null : panel.scrollHeight + "px";
+    document.querySelectorAll('.accordion').forEach(b => {
+        b.onclick = () => {
+            b.classList.toggle('active');
+            let p = b.nextElementSibling;
+            p.style.maxHeight = p.style.maxHeight ? null : p.scrollHeight + "px";
         }
     });
 
@@ -69,83 +84,93 @@
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = document.getElementById('previewImg');
-                img.onload = () => {
-                    document.getElementById('previewContainer').style.display = 'block';
-                    // Ajusta altura do acordeão
-                    const panel = document.getElementById('previewContainer').closest('.panel');
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                };
-                img.src = event.target.result;
+            reader.onload = (ev) => {
+                document.getElementById('previewImg').src = ev.target.result;
+                document.getElementById('previewContainer').style.display = 'block';
+                setTimeout(() => {
+                    const p = document.getElementById('previewContainer').closest('.panel');
+                    p.style.maxHeight = p.scrollHeight + "px";
+                }, 200);
             };
             reader.readAsDataURL(file);
         }
     };
 
-    function updatePreviewText() {
-        document.getElementById('overlay').innerText = document.getElementById('msgInput').value;
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        let words = text.split(' ');
+        let line = '';
+        let lines = [];
+        for(let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + ' ';
+            let metrics = ctx.measureText(testLine);
+            if (metrics.width > maxWidth && n > 0) {
+                lines.push(line);
+                line = words[n] + ' ';
+            } else { line = testLine; }
+        }
+        lines.push(line);
+        let startY = y - ((lines.length - 1) * lineHeight) / 2;
+        for(let k = 0; k < lines.length; k++) {
+            ctx.strokeText(lines[k], x, startY + (k * lineHeight));
+            ctx.fillText(lines[k], x, startY + (k * lineHeight));
+        }
     }
 
     async function executeRitual() {
         const file = document.getElementById('fileIn').files[0];
         const msg = document.getElementById('msgInput').value;
         const status = document.getElementById('status');
+        const dlBtn = document.getElementById('downloadBtn');
+        const finalPanel = document.getElementById('finalPanel');
 
         if (!file) return alert("Selecione uma imagem.");
-        status.innerText = "Transmutando pixels...";
+        status.innerText = "Transmutando...";
 
         const img = new Image();
         img.src = document.getElementById('previewImg').src;
         img.onload = () => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            
-            // Redimensionamento para compressão
-            const scale = Math.min(1, 1000 / img.width);
+            const maxWidth = 1080;
+            const scale = Math.min(1, maxWidth / img.width);
             canvas.width = img.width * scale;
             canvas.height = img.height * scale;
 
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            
-            // Gravação do texto
-            const fontSize = canvas.width * 0.08; 
+            const fontSize = canvas.width * 0.06;
             ctx.font = `bold ${fontSize}px Georgia`;
             ctx.fillStyle = "white";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
-            ctx.shadowColor = "black";
-            ctx.shadowBlur = 15;
-            ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 4;
+
+            wrapText(ctx, msg, canvas.width / 2, canvas.height / 2, canvas.width * 0.8, fontSize * 1.2);
 
             canvas.toBlob(async (blob) => {
                 const fileName = `visceral_${Date.now()}.jpg`;
-                status.innerText = "Sincronizando com o Supabase...";
-
-                // 1. Upload Storage
                 const { error: upErr } = await _supabase.storage.from('alquimia-imagens').upload(fileName, blob);
-                if (upErr) return status.innerText = "Erro Storage: " + upErr.message;
-
+                
                 const { data: { publicUrl } } = _supabase.storage.from('alquimia-imagens').getPublicUrl(fileName);
 
-                // 2. Registro na Tabela
-                const { error: dbErr } = await _supabase.from('historico_visceral').insert([{
-                    url_imagem: publicUrl, mensagem_texto: msg, tamanho_original: file.size, tamanho_final: blob.size
+                await _supabase.from('historico_visceral').insert([{
+                    url_imagem: publicUrl, mensagem_texto: msg,
+                    tamanho_original: file.size, tamanho_final: blob.size
                 }]);
 
-                if (dbErr) return status.innerText = "Erro Banco: " + dbErr.message;
-
-                status.innerHTML = `<b style="color:#00ff00">RITUAL COMPLETO!</b><br>Reduzido de ${(file.size/1024).toFixed(0)}KB para ${(blob.size/1024).toFixed(0)}KB`;
+                status.innerHTML = `<b style="color:#00ff00">RITUAL COMPLETO!</b><br>Reduzido para ${(blob.size/1024).toFixed(0)}KB.`;
                 
-                const dlBtn = document.getElementById('downloadBtn');
+                // MOSTRAR BOTÃO E RECALCULAR ALTURA DO PAINEL
                 dlBtn.style.display = "block";
+                finalPanel.style.maxHeight = finalPanel.scrollHeight + 100 + "px"; 
+
                 dlBtn.onclick = () => {
-                    const link = document.createElement('a');
-                    link.href = URL.createObjectURL(blob);
-                    link.download = "imagem_visceral.jpg";
-                    link.click();
+                    const u = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = u; a.download = fileName;
+                    a.click();
                 };
-            }, 'image/jpeg', 0.5);
+            }, 'image/jpeg', 0.6);
         };
     }
 </script>
