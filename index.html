@@ -4,288 +4,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alquimia | Portal Visceral</title>
-    
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/pombagiras/melusine/main/Al%C3%AA%20(3)%20(3)%20(1).png">
     <meta name="theme-color" content="#030303">
-    
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <style>
-        :root {
-            --dark-abyss: #030303;
-            --blood: #8b0000;
-            --metal: #1a1a1a;
-            --ghost: #d0d0d0;
-        }
-
-        body {
-            background-color: var(--dark-abyss);
-            color: var(--ghost);
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        header {
-            padding: 30px;
-            text-align: center;
-            border-bottom: 1px solid var(--blood);
-            width: 100%;
-            letter-spacing: 4px;
-        }
-
-        .container {
-            width: 95%;
-            max-width: 500px;
-            margin: 20px auto;
-        }
-
-        /* Acordeão Estilo Industrial */
-        .accordion {
-            background-color: var(--metal);
-            color: var(--ghost);
-            cursor: pointer;
-            padding: 20px;
-            width: 100%;
-            border: 1px solid #333;
-            text-align: left;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            font-weight: bold;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            transition: all 0.3s ease;
-        }
-
-        .accordion.active {
-            border-left: 6px solid var(--blood);
-            background-color: #0a0a0a;
-        }
-
-        .panel {
-            padding: 0 15px;
-            background-color: #050505;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-            border: 1px solid #111;
-            margin-bottom: 10px;
-        }
-
-        /* Área de Transmutação (Upload) */
-        .drop-zone {
-            height: 120px;
-            border: 1px dashed var(--blood);
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #666;
-        }
-
-        /* Preview da Alquimia */
-        #previewContainer {
-            position: relative;
-            margin: 15px 0;
-            display: none;
-            border: 1px solid #333;
-        }
-
-        #previewImg {
-            width: 100%;
-            display: block;
-            filter: grayscale(20%) contrast(110%);
-        }
-
-        .overlay-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 85%;
-            text-align: center;
-            color: #fff;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-shadow: 0 0 15px #000, 2px 2px 4px #000;
-            font-family: 'Georgia', serif;
-            pointer-events: none;
-        }
-
-        input[type="text"] {
-            width: 100%;
-            background: #000;
-            border: 1px solid var(--blood);
-            color: #fff;
-            padding: 15px;
-            box-sizing: border-box;
-            margin: 10px 0;
-            font-family: inherit;
-        }
-
-        .btn-ritual {
-            width: 100%;
-            padding: 22px;
-            background-color: var(--blood);
-            color: #fff;
-            border: none;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 15px 0;
-            box-shadow: 0 0 10px rgba(139, 0, 0, 0.3);
-        }
-
-        .btn-ritual:active {
-            transform: scale(0.98);
-            background-color: #600000;
-        }
+        :root { --dark: #030303; --blood: #8b0000; --ghost: #d0d0d0; }
+        body { background: var(--dark); color: var(--ghost); font-family: 'Courier New', monospace; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        header { padding: 30px; text-align: center; border-bottom: 1px solid var(--blood); width: 100%; letter-spacing: 4px; }
+        .container { width: 95%; max-width: 500px; margin: 20px auto; }
+        .accordion { background: #1a1a1a; color: var(--ghost); cursor: pointer; padding: 20px; width: 100%; border: 1px solid #333; text-align: left; font-weight: bold; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .active { border-left: 6px solid var(--blood); }
+        .panel { padding: 0 15px; background: #050505; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; border: 1px solid #111; margin-bottom: 10px; }
+        #previewContainer { position: relative; margin: 15px 0; display: none; }
+        #previewImg { width: 100%; display: block; border: 1px solid var(--blood); }
+        .overlay-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 85%; text-align: center; color: #fff; font-size: 1.5rem; font-weight: bold; text-shadow: 2px 2px 8px #000; font-family: 'Georgia', serif; pointer-events: none; }
+        input[type="text"] { width: 100%; background: #000; border: 1px solid var(--blood); color: #fff; padding: 15px; box-sizing: border-box; margin: 10px 0; }
+        .btn-ritual { width: 100%; padding: 22px; background: var(--blood); color: #fff; border: none; font-weight: bold; cursor: pointer; margin: 10px 0; text-transform: uppercase; }
+        #downloadBtn { display: none; background: #222; border: 1px solid var(--ghost); }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>ALQUIMIA</h1>
-    <small style="color: var(--blood); font-size: 0.6rem;">TRANSFORMAÇÃO VISCERAL</small>
-</header>
+<header><h1>ALQUIMIA</h1></header>
 
 <div class="container">
-    
-    <button class="accordion" onclick="hapticPulse()"><span>01</span> Matéria-Prima <span>+</span></button>
+    <button class="accordion">01 Matéria-Prima <span>+</span></button>
     <div class="panel">
-        <div class="drop-zone" id="dropZone">
-            [ TOQUE PARA SELECIONAR IMAGEM ]
-            <input type="file" id="fileIn" hidden accept="image/jpeg, image/png, image/gif, image/svg+xml">
+        <div style="padding: 20px; text-align: center; border: 1px dashed var(--blood); margin: 15px 0; cursor: pointer;" onclick="document.getElementById('fileIn').click()">
+            [ SELECIONAR IMAGEM ]
+            <input type="file" id="fileIn" hidden accept="image/*">
         </div>
     </div>
 
-    <button class="accordion" onclick="hapticPulse()"><span>02</span> Sopro Vital <span>+</span></button>
+    <button class="accordion">02 Sopro Vital <span>+</span></button>
     <div class="panel">
-        <input type="text" id="msgInput" placeholder="Sua mensagem no abismo..." oninput="updateMessage()">
+        <input type="text" id="msgInput" placeholder="Escreva a frase..." oninput="drawPreview()">
         <div id="previewContainer">
-            <img id="previewImg" src="">
+            <img id="previewImg">
             <div class="overlay-text" id="overlay"></div>
         </div>
     </div>
 
-    <button class="accordion" onclick="hapticPulse()"><span>03</span> Ritual Final <span>+</span></button>
+    <button class="accordion">03 Ritual Final <span>+</span></button>
     <div class="panel">
-        <button class="btn-ritual" onclick="finishRitual()">Comprimir e Transmutar</button>
+        <button class="btn-ritual" id="processBtn" onclick="processRitual()">Comprimir e Gravar Frase</button>
+        <button class="btn-ritual" id="downloadBtn">Baixar Imagem Pronta</button>
+        <p id="status" style="font-size: 0.7rem; text-align: center;"></p>
     </div>
-
 </div>
 
 <script>
-    // Conexão Supabase
     const _supabase = supabase.createClient('https://rbygxkbewzknvjjhxdvw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJieWd4a2Jld3prbnZqamh4ZHZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMDcxNjQsImV4cCI6MjA4MTU4MzE2NH0.YrHF9HEGo6yv9MyNsPzFgBhaAB1DRh2SLU8f7L6s1nY');
 
-    // Lógica do Acordeão
-    const acc = document.getElementsByClassName("accordion");
-    for (let i = 0; i < acc.length; i++) {
-        acc[i].addEventListener("click", function() {
-            this.classList.toggle("active");
-            const panel = this.nextElementSibling;
+    // Accordion
+    document.querySelectorAll('.accordion').forEach(acc => {
+        acc.onclick = function() {
+            this.classList.toggle('active');
+            let panel = this.nextElementSibling;
             panel.style.maxHeight = panel.style.maxHeight ? null : panel.scrollHeight + "px";
-        });
-    }
-
-    // Feedback Háptico
-    function hapticPulse() {
-        if (navigator.vibrate) navigator.vibrate([30, 15, 30]);
-    }
-
-    // Fix do Upload: Forçar clique no input escondido
-    const dropZone = document.getElementById('dropZone');
-    const fileIn = document.getElementById('fileIn');
-
-    dropZone.addEventListener('click', () => fileIn.click());
-
-    fileIn.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                document.getElementById('previewImg').src = event.target.result;
-                document.getElementById('previewContainer').style.display = 'block';
-                // Atualiza o tamanho do painel para caber a imagem
-                const panel = document.getElementById('previewContainer').parentElement;
-                panel.style.maxHeight = panel.scrollHeight + "px";
-                hapticPulse();
-            };
-            reader.readAsDataURL(file);
         }
+    });
+
+    // Preview
+    document.getElementById('fileIn').onchange = function(e) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            document.getElementById('previewImg').src = ev.target.result;
+            document.getElementById('previewContainer').style.display = 'block';
+            drawPreview();
+        };
+        reader.readAsDataURL(e.target.files[0]);
     };
 
-    function updateMessage() {
+    function drawPreview() {
         document.getElementById('overlay').innerText = document.getElementById('msgInput').value;
     }
 
-    // Ritual de Compressão e Upload
-    async function finishRitual() {
-        const file = fileIn.files[0];
-        const mensagem = document.getElementById('msgInput').value;
+    async function processRitual() {
+        const file = document.getElementById('fileIn').files[0];
+        const msg = document.getElementById('msgInput').value;
+        const status = document.getElementById('status');
+        if(!file) return alert("Selecione uma imagem!");
 
-        if (!file) {
-            alert("A matéria-prima é necessária para o ritual.");
-            return;
-        }
+        status.innerText = "Transmutando... aguarde.";
+        
+        const img = new Image();
+        img.src = document.getElementById('previewImg').src;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Redimensionar para compressão real (máximo 1200px de largura)
+            const scale = Math.min(1, 1200 / img.width);
+            canvas.width = img.width * scale;
+            canvas.height = img.height * scale;
+            
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // Gravar o texto nos pixels (Real)
+            ctx.font = `bold ${canvas.width * 0.06}px Georgia`;
+            ctx.fillStyle = "white";
+            ctx.textAlign = "center";
+            ctx.shadowColor = "black";
+            ctx.shadowBlur = 10;
+            ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
 
-        hapticPulse();
-        console.log("Iniciando transmutação...");
+            // Converter para Blob JPG com compressão 0.6 (60%)
+            canvas.toBlob(async (blob) => {
+                const fileName = `visceral_${Date.now()}.jpg`;
+                
+                // 1. Upload Storage
+                const { data: upData, error: upErr } = await _supabase.storage.from('alquimia-imagens').upload(fileName, blob);
+                if(upErr) return status.innerText = "Erro no Upload: " + upErr.message;
 
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const img = document.getElementById('previewImg');
+                const { data: { publicUrl } } = _supabase.storage.from('alquimia-imagens').getPublicUrl(fileName);
 
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        ctx.drawImage(img, 0, 0);
+                // 2. Insert Tabela
+                const { error: dbErr } = await _supabase.from('historico_visceral').insert([{
+                    url_imagem: publicUrl, mensagem_texto: msg, tamanho_original: file.size, tamanho_final: blob.size
+                }]);
 
-        // Estilo do Texto
-        const size = canvas.width * 0.06;
-        ctx.font = `bold ${size}px Georgia`;
-        ctx.fillStyle = "white";
-        ctx.textAlign = "center";
-        ctx.shadowColor = "black";
-        ctx.shadowBlur = 15;
-        ctx.fillText(mensagem, canvas.width / 2, canvas.height / 2);
-
-        canvas.toBlob(async (blob) => {
-            const fileName = `alquimia_${Date.now()}.jpg`;
-
-            // Enviar para o Storage
-            const { data, error: upError } = await _supabase.storage
-                .from('alquimia-imagens')
-                .upload(fileName, blob);
-
-            if (upError) {
-                alert("O abismo rejeitou a imagem: " + upError.message);
-                return;
-            }
-
-            const { data: { publicUrl } } = _supabase.storage.from('alquimia-imagens').getPublicUrl(fileName);
-
-            // Gravar no Banco
-            await _supabase.from('historico_visceral').insert([{ 
-                url_imagem: publicUrl, 
-                mensagem_texto: mensagem,
-                tamanho_original: file.size,
-                tamanho_final: blob.size 
-            }]);
-
-            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-            alert("Transmutação completa. A imagem agora é eterna.");
-            window.open(publicUrl, '_blank');
-        }, 'image/jpeg', 0.7);
+                status.innerText = `Sucesso! Original: ${(file.size/1024).toFixed(0)}KB -> Final: ${(blob.size/1024).toFixed(0)}KB`;
+                
+                // Botão de Download
+                const dlBtn = document.getElementById('downloadBtn');
+                dlBtn.style.display = "block";
+                dlBtn.onclick = () => {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = fileName;
+                    link.click();
+                };
+            }, 'image/jpeg', 0.6);
+        };
     }
 </script>
 </body>
